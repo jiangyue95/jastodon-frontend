@@ -10,7 +10,7 @@ export type CsrfResult =
 
 export async function fetchCsrf(): Promise<CsrfResult> {
   const response = await fetch('/csrf', { redirect: 'manual' })
-  if (response.type === 'opaqueredirect') {
+  if (response.type === 'opaqueredirect' || response.status === 401) {
     return { kind: 'loggedOut' }
   }
   if (!response.ok) {
@@ -35,7 +35,8 @@ export async function postNote(csrf: CsrfToken, content: string): Promise<PostRe
     },
     body: JSON.stringify({ content }),
   })
-  if (response.type === 'opaqueredirect' || response.status === 403) {
+  if (response.type === 'opaqueredirect' || response.status === 401 || 
+    response.status === 403) {
     return { kind: 'loggedOut' }
   }
   if (response.status === 400) {
