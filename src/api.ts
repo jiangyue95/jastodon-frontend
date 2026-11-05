@@ -35,7 +35,7 @@ export async function postNote(csrf: CsrfToken, content: string): Promise<PostRe
     },
     body: JSON.stringify({ content }),
   })
-  if (response.type === 'opaqueredirect' || response.status === 401 || 
+  if (response.type === 'opaqueredirect' || response.status === 401 ||
     response.status === 403) {
     return { kind: 'loggedOut' }
   }
