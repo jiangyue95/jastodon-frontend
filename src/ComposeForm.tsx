@@ -37,11 +37,12 @@ function ComposeForm({ csrf, onLoggedOut }: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
+      <label htmlFor="note-content">New note</label>
       <textarea
+        id="note-content"
         value={content}
         onChange={(event) => setContent(event.target.value)}
         rows={5}
-        cols={50}
       />
       <button type="submit" disabled={submit.kind === 'posting'}>
         Post

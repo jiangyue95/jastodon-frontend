@@ -9,7 +9,7 @@ type PageState =
   | { kind: 'error'; message: string }
 
 function App() {
-  const[state, setState] = useState<PageState>({ kind: 'loading' })
+  const [state, setState] = useState<PageState>({ kind: 'loading' })
 
   useEffect(() => {
     fetchCsrf()
@@ -21,7 +21,7 @@ function App() {
     return <p>Loading...</p>
   }
   if (state.kind === 'loggedOut') {
-    return <a href="/oauth2/authorization/github">Log in with Github</a>
+    return <a href="/oauth2/authorization/github">Log in with GitHub</a>
   }
   if (state.kind === 'error') {
     return <p>Something went wrong: {state.message}</p>
