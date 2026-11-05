@@ -17,7 +17,7 @@ export async function fetchCsrf(): Promise<CsrfResult> {
     throw new Error(`GET /csrf answered ${response.status}`)
   }
   const csrf: CsrfToken = await response.json()
-  return { kind: 'loggedin', csrf }
+  return { kind: 'loggedIn', csrf }
 }
 
 export type PostResult =
