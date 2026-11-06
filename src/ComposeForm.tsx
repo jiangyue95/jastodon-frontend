@@ -16,6 +16,7 @@ type Props = {
 function ComposeForm({ csrf, onLoggedOut }: Props) {
   const [content, setContent] = useState('')
   const [submit, setSubmit] = useState<SubmitState>({ kind: 'idle' })
+  const isBlank = content.trim() === ''
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -44,7 +45,7 @@ function ComposeForm({ csrf, onLoggedOut }: Props) {
         onChange={(event) => setContent(event.target.value)}
         rows={5}
       />
-      <button type="submit" disabled={submit.kind === 'posting'}>
+      <button type="submit" disabled={isBlank || submit.kind === 'posting'}>
         Post
       </button>
       {submit.kind === 'created' && (
