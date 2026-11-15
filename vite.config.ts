@@ -5,7 +5,7 @@ const backend = 'http://localhost:8080'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/compose/',
+  base: '/',
   plugins: [react()],
   server: {
     proxy: {
