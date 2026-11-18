@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchCsrf, type CsrfToken } from './api'
 import ComposeForm from './ComposeForm'
+import NoteList from './NoteList'
 
 type PageState =
   | { kind: 'loading' }
@@ -26,7 +27,12 @@ function App() {
   if (state.kind === 'error') {
     return <p>Something went wrong: {state.message}</p>
   }
-  return <ComposeForm csrf={state.csrf} onLoggedOut={() => setState({ kind: 'loggedOut' })} />
+  return (
+    <>
+      <ComposeForm csrf={state.csrf} onLoggedOut={() => setState({ kind: 'loggedOut' })} />
+      <NoteList onLoggedOut={() => setState({ kind: 'loggedOut' })} />
+    </>
+  )
 }
 
 export default App
