@@ -11,6 +11,7 @@ type PageState =
 
 function App() {
   const [state, setState] = useState<PageState>({ kind: 'loading' })
+  const [posted, setPosted] = useState(0)
 
   useEffect(() => {
     fetchCsrf()
@@ -29,8 +30,12 @@ function App() {
   }
   return (
     <>
-      <ComposeForm csrf={state.csrf} onLoggedOut={() => setState({ kind: 'loggedOut' })} />
-      <NoteList onLoggedOut={() => setState({ kind: 'loggedOut' })} />
+      <ComposeForm
+        csrf={state.csrf}
+        onLoggedOut={() => setState({ kind: 'loggedOut' })}
+        onPosted={() => setPosted((count) => count + 1)}
+      />
+      <NoteList key={posted} onLoggedOut={() => setState({ kind: 'loggedOut' })} />
     </>
   )
 }
