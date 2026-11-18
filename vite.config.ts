@@ -12,6 +12,7 @@ export default defineConfig({
       '/csrf': { target: backend, changeOrigin: true },
       '/notes': { target: backend, changeOrigin: true },
       '/oauth2': { target: backend, changeOrigin: true },
+      '/profile': { target: backend, changeOrigin: true },
     }
   }
 })
