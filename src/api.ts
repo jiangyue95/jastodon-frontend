@@ -51,3 +51,27 @@ export async function postNote(csrf: CsrfToken, content: string): Promise<PostRe
   }
   return { kind: 'created', location }
 }
+
+export type Note = {
+  id: string
+  content: string
+  published: string
+  url: string
+}
+
+export type NotesResult =
+  | { kind: 'page'; notes: Note[]; next: string | null }
+  | { kind: 'loggedOut' }
+
+export async function fetchNotes(cursor: string | null): Promise<NotesResult> {
+  const query = cursor === null ? '' : `?${new URLSearchParams({ cursor })}`
+  const response = await fetch(`/notes${query}`, { redirect: 'manual' })
+  if (response.type === 'opaqueredirect' || response.status === 401) {
+    return { kind: 'loggedOut' }
+  }
+  if (!response.ok) {
+    throw new Error(`GET /notes answered ${response.status}`)
+  }
+  const page: { notes: Note[]; next: string | null } = await response.json()
+  return { kind: 'page', notes: page.notes, next: page.next }
+}

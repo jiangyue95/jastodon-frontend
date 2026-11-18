@@ -11,9 +11,10 @@ type SubmitState =
 type Props = {
   csrf: CsrfToken
   onLoggedOut: () => void
+  onPosted: () => void
 }
 
-function ComposeForm({ csrf, onLoggedOut }: Props) {
+function ComposeForm({ csrf, onLoggedOut, onPosted }: Props) {
   const [content, setContent] = useState('')
   const [submit, setSubmit] = useState<SubmitState>({ kind: 'idle' })
   const isBlank = content.trim() === ''
@@ -29,6 +30,7 @@ function ComposeForm({ csrf, onLoggedOut }: Props) {
       }
       if (result.kind === 'created') {
         setContent('')
+        onPosted()
       }
       setSubmit(result)
     } catch (error: unknown) {

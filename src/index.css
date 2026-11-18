@@ -89,3 +89,8 @@ a {
   color: var(--accent);
   overflow-wrap: anywhere;
 }
+
+.note-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
