@@ -95,3 +95,32 @@ export async function fetchProfile(): Promise<ProfileResult> {
   const profile: Profile = await response.json()
   return { kind: 'profile', profile }
 }
+
+export type UploadAvatarResult =
+  | { kind: 'uploaded'; url: string }
+  | { kind: 'unavailable' }
+  | { kind: 'loggedOut' }
+
+export async function uploadAvatar(csrf: CsrfToken, image: Blob): Promise<UploadAvatarResult> {
+  const body = new FormData()
+  body.append('avatar', image, 'avatar.png')
+  const response = await fetch('/profile/avatar', {
+    method: 'POST',
+    redirect: 'manual',
+    headers: {
+      [csrf.headerName]: csrf.token,
+    },
+    body,
+  })
+  if (response.type === 'opaqueredirect' || response.status === 401 || response.status === 403) {
+    return { kind: 'loggedOut' }
+  }
+  if (response.status === 503) {
+    return { kind: 'unavailable' }
+  }
+  if (response.status !== 200) {
+    throw new Error(`POST /profile/avatar answered ${response.status}`)
+  }
+  const uploaded: { url: string } = await response.json()
+  return { kind: 'uploaded', url: uploaded.url }
+}
