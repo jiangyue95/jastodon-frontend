@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AvatarEditor from './AvatarEditor'
 
 type Props = {
   avatarUrl: string | null
@@ -25,6 +26,7 @@ function ProfileHeader({ avatarUrl }: Props) {
           aria-label="No avatar"
         />
       )}
+      <AvatarEditor />
     </header>
   )
 }
