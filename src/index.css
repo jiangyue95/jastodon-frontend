@@ -94,3 +94,18 @@ a {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.profile-header {
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.avatar-placeholder {
+  background: var(--border);
+}

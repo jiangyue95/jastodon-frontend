@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchCsrf, fetchProfile, type CsrfToken, type Profile } from './api'
 import ComposeForm from './ComposeForm'
 import NoteList from './NoteList'
+import ProfileHeader from './ProfileHeader'
 
 type PageState =
   | { kind: 'loading' }
@@ -40,6 +41,7 @@ function App() {
   }
   return (
     <>
+      <ProfileHeader key={state.profile.avatarUrl} avatarUrl={state.profile.avatarUrl} />
       <ComposeForm
         csrf={state.csrf}
         onLoggedOut={() => setState({ kind: 'loggedOut' })}
