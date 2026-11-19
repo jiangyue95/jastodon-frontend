@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import Avatar from './Avatar'
 import AvatarEditor from './AvatarEditor'
 
 type Props = {
@@ -6,26 +6,9 @@ type Props = {
 }
 
 function ProfileHeader({ avatarUrl }: Props) {
-  const [failed, setFailed] = useState(false)
-
   return (
     <header className="profile-header">
-      {avatarUrl !== null && !failed ? (
-        <img
-          className="avatar"
-          src={avatarUrl}
-          alt="Your avatar"
-          width={64}
-          height={64}
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <div
-          className="avatar avatar-placeholder"
-          role="img"
-          aria-label="No avatar"
-        />
-      )}
+      <Avatar key={avatarUrl} url={avatarUrl} />
       <AvatarEditor />
     </header>
   )

@@ -41,7 +41,7 @@ function App() {
   }
   return (
     <>
-      <ProfileHeader key={state.profile.avatarUrl} avatarUrl={state.profile.avatarUrl} />
+      <ProfileHeader avatarUrl={state.profile.avatarUrl} />
       <ComposeForm
         csrf={state.csrf}
         onLoggedOut={() => setState({ kind: 'loggedOut' })}
