@@ -75,3 +75,23 @@ export async function fetchNotes(cursor: string | null): Promise<NotesResult> {
   const page: { notes: Note[]; next: string | null } = await response.json()
   return { kind: 'page', notes: page.notes, next: page.next }
 }
+
+export type Profile = {
+  avatarUrl: string | null
+}
+
+export type ProfileResult =
+  | { kind: 'profile'; profile: Profile }
+  | { kind: 'loggedOut' }
+
+export async function fetchProfile(): Promise<ProfileResult> {
+  const response = await fetch('/profile', { redirect: 'manual' })
+  if (response.type === 'opaqueredirect' || response.status === 401) {
+    return { kind: 'loggedOut' }
+  }
+  if (!response.ok) {
+    throw new Error(`GET /profile answered ${response.status}`)
+  }
+  const profile: Profile = await response.json()
+  return { kind: 'profile', profile }
+}
