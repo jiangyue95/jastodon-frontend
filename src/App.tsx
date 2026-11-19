@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { fetchCsrf, type CsrfToken } from './api'
+import { fetchCsrf, fetchProfile, type CsrfToken, type Profile } from './api'
 import ComposeForm from './ComposeForm'
 import NoteList from './NoteList'
 
 type PageState =
   | { kind: 'loading' }
   | { kind: 'loggedOut' }
-  | { kind: 'loggedIn'; csrf: CsrfToken }
+  | { kind: 'loggedIn'; csrf: CsrfToken; profile: Profile }
   | { kind: 'error'; message: string }
 
 function App() {
@@ -14,8 +14,18 @@ function App() {
   const [posted, setPosted] = useState(0)
 
   useEffect(() => {
-    fetchCsrf()
-      .then((result) => setState(result))
+    Promise.all([fetchCsrf(), fetchProfile()])
+      .then(([csrfResult, profileResult]) => {
+        if (csrfResult.kind === 'loggedOut' || profileResult.kind === 'loggedOut') {
+          setState({ kind: 'loggedOut' })
+          return
+        }
+        setState({
+          kind: 'loggedIn',
+          csrf: csrfResult.csrf,
+          profile: profileResult.profile
+        })
+      })
       .catch((error: unknown) => setState({ kind: 'error', message: String(error) }))
   }, [])
 
