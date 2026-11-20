@@ -1,30 +1,23 @@
-import { useState } from 'react'
+import Avatar from './Avatar'
+import AvatarEditor from './AvatarEditor'
+import type { CsrfToken } from './api'
 
 type Props = {
   avatarUrl: string | null
+  csrf: CsrfToken
+  onAvatarChanged: (url: string) => void
+  onLoggedOut: () => void
 }
 
-function ProfileHeader({ avatarUrl }: Props) {
-  const [failed, setFailed] = useState(false)
-
+function ProfileHeader({ avatarUrl, csrf, onAvatarChanged, onLoggedOut }: Props) {
   return (
     <header className="profile-header">
-      {avatarUrl !== null && !failed ? (
-        <img
-          className="avatar"
-          src={avatarUrl}
-          alt="Your avatar"
-          width={64}
-          height={64}
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <div
-          className="avatar avatar-placeholder"
-          role="img"
-          aria-label="No avatar"
-        />
-      )}
+      <Avatar key={avatarUrl} url={avatarUrl} />
+      <AvatarEditor
+        csrf={csrf}
+        onAvatarChanged={onAvatarChanged}
+        onLoggedOut={onLoggedOut}
+      />
     </header>
   )
 }

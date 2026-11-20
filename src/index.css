@@ -109,3 +109,8 @@ a {
 .avatar-placeholder {
   background: var(--border);
 }
+
+.avatar-preview {
+  display: block;
+  border-radius: 50%;
+}

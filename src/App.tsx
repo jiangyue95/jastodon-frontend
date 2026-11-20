@@ -30,6 +30,14 @@ function App() {
       .catch((error: unknown) => setState({ kind: 'error', message: String(error) }))
   }, [])
 
+  function handleAvatarChanged(avatarUrl: string) {
+    setState((current) =>
+      current.kind === 'loggedIn'
+        ? { ...current, profile: { ...current.profile, avatarUrl } }
+        : current,
+    )
+  }
+
   if (state.kind === 'loading') {
     return <p>Loading...</p>
   }
@@ -41,7 +49,12 @@ function App() {
   }
   return (
     <>
-      <ProfileHeader key={state.profile.avatarUrl} avatarUrl={state.profile.avatarUrl} />
+      <ProfileHeader
+        avatarUrl={state.profile.avatarUrl}
+        csrf={state.csrf}
+        onAvatarChanged={handleAvatarChanged}
+        onLoggedOut={() => setState({ kind: 'loggedOut' })}
+      />
       <ComposeForm
         csrf={state.csrf}
         onLoggedOut={() => setState({ kind: 'loggedOut' })}
