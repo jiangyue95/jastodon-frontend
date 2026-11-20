@@ -55,6 +55,7 @@ function AvatarEditor({ csrf, onAvatarChanged, onLoggedOut }: Props) {
 
   async function handleSave() {
     if (preview === null) return
+    const request = latestRequest.current
     setStatus({ kind: 'uploading' })
     try {
       const result = await uploadAvatar(csrf, preview.blob)
@@ -63,14 +64,18 @@ function AvatarEditor({ csrf, onAvatarChanged, onLoggedOut }: Props) {
         return
       }
       if (result.kind === 'unavailable') {
-        setStatus({ kind: 'error', message: SAVE_FAILED })
+        if (request === latestRequest.current) {
+          setStatus({ kind: 'error', message: SAVE_FAILED })
+        }
         return
       }
       dialogRef.current?.close()
       onAvatarChanged(result.url)
     } catch (error: unknown) {
       console.error('Cannot save the avatar', error)
-      setStatus({ kind: 'error', message: SAVE_FAILED })
+      if (request === latestRequest.current) {
+        setStatus({ kind: 'error', message: SAVE_FAILED })
+      }
     }
   }
 
