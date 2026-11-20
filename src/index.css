@@ -110,7 +110,9 @@ a {
   background: var(--border);
 }
 
-.avatar-preview {
-  display: block;
-  border-radius: 50%;
+.avatar-cropper {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
 }

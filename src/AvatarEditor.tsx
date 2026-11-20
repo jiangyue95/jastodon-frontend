@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ChangeEvent, type SyntheticEvent } from 'react'
-import { cropToAvatar } from './avatarImage'
+import AvatarCropper from './AvatarCropper'
+import { cropToAvatar, type CropArea } from './avatarImage'
 import { uploadAvatar, type CsrfToken } from './api'
 
-type Preview = { blob: Blob; url: string }
+type Source = { file: File; url: string }
 
 type Status =
   | { kind: 'idle' }
@@ -20,45 +21,38 @@ const SAVE_FAILED = 'Could not save the avatar. Try again later.'
 function AvatarEditor({ csrf, onAvatarChanged, onLoggedOut }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const latestRequest = useRef(0)
-  const [preview, setPreview] = useState<Preview | null>(null)
+  const [source, setSource] = useState<Source | null>(null)
+  const [area, setArea] = useState<CropArea | null>(null)
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
 
   useEffect(() => {
-    if (preview === null) return
-    return () => URL.revokeObjectURL(preview.url)
-  }, [preview])
+    if (source === null) return
+    return () => URL.revokeObjectURL(source.url)
+  }, [source])
 
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0]
     event.currentTarget.value = ''
     if (file === undefined) return
-    latestRequest.current += 1
-    const request = latestRequest.current
-    try {
-      const blob = await cropToAvatar(file)
-      if (request !== latestRequest.current) return
-      setPreview({ blob, url: URL.createObjectURL(blob) })
-      setStatus({ kind: 'idle' })
-    } catch (error: unknown) {
-      if (request !== latestRequest.current) return
-      console.error('Cannot read the chosen image', error)
-      setPreview(null)
-      setStatus({ kind: 'error', message: 'Cannot read this image' })
-    }
+    setSource({ file, url: URL.createObjectURL(file) })
+    setArea(null)
+    setStatus({ kind: 'idle' })
   }
 
   function handleClose() {
     latestRequest.current += 1
-    setPreview(null)
+    setSource(null)
+    setArea(null)
     setStatus({ kind: 'idle' })
   }
 
   async function handleSave() {
-    if (preview === null) return
+    if (source === null || area === null) return
     const request = latestRequest.current
     setStatus({ kind: 'uploading' })
     try {
-      const result = await uploadAvatar(csrf, preview.blob)
+      const blob = await cropToAvatar(source.file, area)
+      const result = await uploadAvatar(csrf, blob)
       if (result.kind === 'loggedOut') {
         onLoggedOut()
         return
@@ -107,17 +101,15 @@ function AvatarEditor({ csrf, onAvatarChanged, onLoggedOut }: Props) {
           onChange={handleFileChange}
           disabled={uploading}
         />
-        {preview !== null && (
-          <img
-            className="avatar-preview"
-            src={preview.url}
-            alt="Preview of the new avatar"
-            width={200}
-            height={200}
-          />
+        {source !== null && (
+          <AvatarCropper key={source.url} imageUrl={source.url} onAreaChange={setArea} />
         )}
         {status.kind === 'error' && <p role="alert">{status.message}</p>}
-        <button type="button" onClick={handleSave} disabled={preview === null || uploading}>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={source === null || area === null || uploading}
+        >
           {uploading ? 'Saving...' : 'Save'}
         </button>
         <button type="button" onClick={() => dialogRef.current?.close()} disabled={uploading}>
