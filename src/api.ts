@@ -77,6 +77,8 @@ export async function fetchNotes(cursor: string | null): Promise<NotesResult> {
 }
 
 export type Profile = {
+  username: string
+  acct: string
   avatarUrl: string | null
 }
 
