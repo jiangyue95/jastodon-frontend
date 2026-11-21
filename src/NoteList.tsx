@@ -1,5 +1,7 @@
 import { useEffect, useEffectEvent, useState } from 'react'
-import { fetchNotes, type Note } from './api'
+import { fetchNotes, type Note, type Profile } from './api'
+import { formatRelativeTime } from './relativeTime'
+import { useNow } from './useNow'
 
 type ListState =
   | { kind: 'loading' }
@@ -7,11 +9,13 @@ type ListState =
   | { kind: 'error'; message: string }
 
 type Props = {
+  profile: Profile
   onLoggedOut: () => void
 }
 
-function NoteList({ onLoggedOut }: Props) {
+function NoteList({ profile, onLoggedOut }: Props) {
   const [state, setState] = useState<ListState>({ kind: 'loading' })
+  const now = useNow()
   const handleLoggedOut = useEffectEvent(onLoggedOut)
 
   useEffect(() => {
@@ -74,10 +78,21 @@ function NoteList({ onLoggedOut }: Props) {
       <ul className="notes">
         {state.notes.map((note) => (
           <li key={note.id}>
+            <div className="note-header">
+              <span className="note-name">{profile.username}</span>
+              <span className="note-handle">@{profile.acct}</span>
+              <span aria-hidden="true">·</span>
+              <time
+                dateTime={note.published}
+                title={new Date(note.published).toLocaleString(undefined, {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                })}
+              >
+                {formatRelativeTime(note.published, now)}
+              </time>
+            </div>
             <p className="note-content">{note.content}</p>
-            <time dateTime={note.published}>
-              {new Date(note.published).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-            </time>
           </li>
         ))}
       </ul>

@@ -60,7 +60,11 @@ function App() {
         onLoggedOut={() => setState({ kind: 'loggedOut' })}
         onPosted={() => setPosted((count) => count + 1)}
       />
-      <NoteList key={posted} onLoggedOut={() => setState({ kind: 'loggedOut' })} />
+      <NoteList
+        key={posted}
+        profile={state.profile}
+        onLoggedOut={() => setState({ kind: 'loggedOut' })}
+      />
     </>
   )
 }
