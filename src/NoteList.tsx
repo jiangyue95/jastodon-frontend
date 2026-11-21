@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useState } from 'react'
 import { fetchNotes, type Note, type Profile } from './api'
 import { formatRelativeTime } from './relativeTime'
 import { useNow } from './useNow'
+import Avatar from './Avatar'
 
 type ListState =
   | { kind: 'loading' }
@@ -77,22 +78,25 @@ function NoteList({ profile, onLoggedOut }: Props) {
     <section aria-label="Your notes">
       <ul className="notes">
         {state.notes.map((note) => (
-          <li key={note.id}>
-            <div className="note-header">
-              <span className="note-name">{profile.username}</span>
-              <span className="note-handle">@{profile.acct}</span>
-              <span aria-hidden="true">·</span>
-              <time
-                dateTime={note.published}
-                title={new Date(note.published).toLocaleString(undefined, {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                })}
-              >
-                {formatRelativeTime(note.published, now)}
-              </time>
+          <li key={note.id} className="note">
+            <Avatar key={profile.avatarUrl} url={profile.avatarUrl} size={40} alt="" />
+            <div className="note-body">
+              <div className="note-header">
+                <span className="note-name">{profile.username}</span>
+                <span className="note-handle">@{profile.acct}</span>
+                <span aria-hidden="true">·</span>
+                <time
+                  dateTime={note.published}
+                  title={new Date(note.published).toLocaleString(undefined, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                >
+                  {formatRelativeTime(note.published, now)}
+                </time>
+              </div>
+              <p className="note-content">{note.content}</p>
             </div>
-            <p className="note-content">{note.content}</p>
           </li>
         ))}
       </ul>
